@@ -1,0 +1,26 @@
+name: Dispatch update-analyzer-templates
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo:
+          - nlp-engine-linux
+          - nlp-engine-windows
+          - nlp-engine-mac
+          - visualtext-files
+    steps:
+      - name: Trigger update-analyzer-templates.yml in ${{ matrix.repo }}
+        env:
+          GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          gh workflow run update-analyzer-templates.yml \
+            --repo VisualText/${{ matrix.repo }} \
+            --ref main
