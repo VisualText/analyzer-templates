@@ -18,10 +18,32 @@ jobs:
           - nlp-engine-mac
           - visualtext-files
     steps:
+      - name: Diagnose target repo state
+        env:
+          GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          echo "::group::Token check"
+          gh api user -q .login || echo "Token cannot authenticate"
+          echo "::endgroup::"
+
+          echo "::group::Repo VisualText/${{ matrix.repo }}"
+          gh api repos/VisualText/${{ matrix.repo }} -q '.default_branch' \
+            && echo "Repo is visible to token" \
+            || echo "Repo NOT visible (404) — check PAT scope / repo name"
+          echo "::endgroup::"
+
+          echo "::group::Workflow file presence"
+          gh api repos/VisualText/${{ matrix.repo }}/actions/workflows \
+            -q '.workflows[] | "\(.path)  state=\(.state)"' \
+            || echo "Cannot list workflows in this repo"
+          echo "::endgroup::"
+
       - name: Trigger update-analyzer-templates.yml in ${{ matrix.repo }}
         env:
           GH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
         run: |
+          DEFAULT_BRANCH=$(gh api repos/VisualText/${{ matrix.repo }} -q '.default_branch')
+          echo "Dispatching against ref: $DEFAULT_BRANCH"
           gh workflow run update-analyzer-templates.yml \
             --repo VisualText/${{ matrix.repo }} \
-            --ref main
+            --ref "$DEFAULT_BRANCH"
