@@ -62,3 +62,9 @@ Allows for analyzing text for articles on moose (appears in the description of t
 
 The way in which to best utilize this analyzer is...
 ```
+
+## Cross-repo release automation
+
+This repo participates in the VisualText cross-repo release "percolation"
+system: submodule bumps flow downstream automatically via `repository_dispatch`.
+See **[nlp-engine/docs/PERCOLATION.md](https://github.com/VisualText/nlp-engine/blob/master/docs/PERCOLATION.md)** for the full map.
