@@ -1,0 +1,115 @@
+name: Update parse-en-us & Bump Version
+
+# Listener in the parse-en-us percolation chain (see nlp-engine/docs/PERCOLATION.md).
+#
+# Fires when parse-en-us pushes a release tag (repository_dispatch:
+# parse-en-us-release), or manually. Bumps the parse-en-us submodule to the latest
+# main, bumps this repo's semver tag, and pushes the tag so the tag push fires
+# dispatch-update-analyzer-templates.yml, which percolates to
+# nlp-engine-{linux,windows,mac} and visualtext-files.
+#
+# IMPORTANT: the checkout/push use CLASSIC_PAT, not GITHUB_TOKEN. A tag pushed with
+# GITHUB_TOKEN cannot trigger other workflows, so the downstream dispatch would
+# never run. CLASSIC_PAT (classic PAT, `repo` scope) is the shared sender secret
+# already used by dispatch-update-analyzer-templates.yml.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Semver component to bump"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  repository_dispatch:
+    types: [parse-en-us-release]
+
+permissions:
+  contents: write
+
+jobs:
+  update-and-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (with submodules and full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.CLASSIC_PAT }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Update parse-en-us to latest main
+        id: submodule
+        run: |
+          set -euo pipefail
+          before=$(git -C parse-en-us rev-parse HEAD)
+          git -C parse-en-us fetch origin main
+          git -C parse-en-us checkout origin/main
+          git -C parse-en-us submodule update --init --recursive
+          after=$(git -C parse-en-us rev-parse HEAD)
+          echo "before=$before" >> "$GITHUB_OUTPUT"
+          echo "after=$after"   >> "$GITHUB_OUTPUT"
+          if [ "$before" = "$after" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "parse-en-us already at $after — nothing to do."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "parse-en-us: $before -> $after"
+          fi
+
+      - name: Report no changes
+        if: steps.submodule.outputs.changed != 'true'
+        run: echo "parse-en-us is already at the latest commit — nothing to commit."
+
+      - name: Compute next version
+        if: steps.submodule.outputs.changed == 'true'
+        id: version
+        run: |
+          set -euo pipefail
+          bump="${{ github.event.inputs.bump }}"
+          bump="${bump:-patch}"   # repository_dispatch carries no inputs -> patch
+          latest=$(git tag --sort=-v:refname \
+                   | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+                   | head -n1 || true)
+          latest=${latest:-v0.0.0}
+          IFS='.' read -r major minor patch <<<"${latest#v}"
+          case "$bump" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+          new="v${major}.${minor}.${patch}"
+          echo "previous=$latest" >> "$GITHUB_OUTPUT"
+          echo "new=$new"         >> "$GITHUB_OUTPUT"
+          echo "Bumping $latest -> $new"
+
+      - name: Commit, tag, and push
+        if: steps.submodule.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          git add parse-en-us
+          git commit -m "Update parse-en-us to ${{ steps.submodule.outputs.after }} (${{ steps.version.outputs.new }})"
+          git tag -a "${{ steps.version.outputs.new }}" -m "Release ${{ steps.version.outputs.new }}"
+          git push origin HEAD
+          git push origin "${{ steps.version.outputs.new }}"
+
+      - name: Summary
+        if: steps.submodule.outputs.changed == 'true'
+        run: |
+          {
+            echo "### Update parse-en-us & bump version"
+            echo ""
+            echo "- new tag: \`${{ steps.version.outputs.new }}\` (was \`${{ steps.version.outputs.previous }}\`)"
+            echo "- parse-en-us: \`${{ steps.submodule.outputs.before }}\` → \`${{ steps.submodule.outputs.after }}\`"
+            echo ""
+            echo "The new tag fires dispatch-update-analyzer-templates.yml to percolate downstream."
+          } >> "$GITHUB_STEP_SUMMARY"
