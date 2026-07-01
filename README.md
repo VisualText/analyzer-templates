@@ -23,6 +23,9 @@ A date and time analyzer that recognizes common date and time expressions in tex
 ### [Email Addresses](Email%20Addresses/README.md)
 Identifies email addresses across a variety of formats. For each match it extracts the local name, domain name, and top-level domain (TLD), and emits the result as JSON.
 
+### [Knowledge Base](Knowledge%20Base/README.md)
+A starter analyzer that builds, saves, and exports a knowledge base as JSON. Shows the minimal plumbing: an init pass that creates a `kb` global concept and populates it, and an output pass that persists it with `SaveKB` and `JsonKB` from the shared KB function library.
+
 ### [Paragraphs Sentences](Paragraphs%20Sentences/README.md)
 Lays out the basics of paragraph and sentence segmentation with dictionary lookup. Intended as a starting point — each domain has its own quirks (abbreviations, lists, etc.) that can fool sentence enders and will need domain-specific handling.
 
