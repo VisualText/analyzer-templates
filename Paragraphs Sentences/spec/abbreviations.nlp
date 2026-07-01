@@ -1,12 +1,17 @@
 ###############################################
 # FILE: abbreviations
-# SUBJ: comment
+# SUBJ: Mark dotted abbreviations so their periods don't end sentences
 # AUTH: David de Hilster
 # CREATED: 2024-6-3 14:52:37
 # MODIFIED:
 ###############################################
 
+# Abbreviations that contain periods (here "U.S.") would otherwise fool the
+# sentence-ender logic. Grouping the letters and dots into a single _usa node
+# hides those interior periods from the later sentenceEnders pass. Each domain
+# will have its own set of abbreviations to protect this way.
+
 @NODES _paragraph
 
 @RULES
-_usa <- u \. s \. @@
+_usa <- u \. s \. @@	### u . s . -> single _usa token

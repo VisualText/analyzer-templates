@@ -1,6 +1,6 @@
 ###############################################
 # FILE: dates
-# SUBJ: comment
+# SUBJ: Recognize date expressions in many formats and extract day/month/year
 # AUTH: David de Hilster
 # CREATED: 2024-5-31 21:28:10
 # MODIFIED:
@@ -12,10 +12,12 @@
 # 19th day of May, 2015
 ###############################################
 
+# @PRE requires element 4 to be flagged as a month name and element 6 a year.
 @PRE
 <4,4> var("month");
 <6,6> var("year");
 
+# Pull day from the ordinal, month from the alpha word, and year from the number.
 @POST
 S("day") = N("num",1);
 S("month") = N("month",4);
@@ -24,18 +26,20 @@ single();
 
 @RULES
 _date <-
-	_ordinal	### (1)
-	day			### (2)
-	of			### (3)
-	_xALPHA		### (4)
-	\, [opt]	### (5)
-	_xNUM		### (6)
+	_ordinal	### (1) ordinal day (e.g. 19th)
+	day			### (2) literal "day"
+	of			### (3) literal "of"
+	_xALPHA		### (4) month name
+	\, [opt]	### (5) optional comma
+	_xNUM		### (6) year
 	@@
 
 ###############################################
 # 2/4/2005
 ###############################################
 
+# Three numbers joined by / ' - or . separators. If the first number is
+# large (>99) treat it as year-month-day order; otherwise month-day-year.
 @POST
 L("one") = num(N("$text",1));
 L("two") = num(N("$text",3));
@@ -54,17 +58,18 @@ single();
 
 @RULES
 _date <-
-	_xNUM							### (1)
-	_xWILD [match=(\/ \' \- \.)]	### (2)
-	_xNUM							### (3)
-	_xWILD [match=(\/ \' \- \.)]	### (4)
-	_xNUM							### (5)
+	_xNUM							### (1) first number
+	_xWILD [match=(\/ \' \- \.)]	### (2) separator
+	_xNUM							### (3) second number
+	_xWILD [match=(\/ \' \- \.)]	### (4) separator
+	_xNUM							### (5) third number
 	@@
 
 ###############################################
 # 31 Oct 2021
 ###############################################
 
+# Day-number, month-name, year (e.g. "31 Oct 2021").
 @PRE
 <1,1> var("day");
 <2,2> var("month");
@@ -78,15 +83,16 @@ single();
 
 @RULES
 _date <-
-	_xNUM	### (1)
-	_xALPHA	### (2)
-	_xNUM	### (3)
+	_xNUM	### (1) day
+	_xALPHA	### (2) month name
+	_xNUM	### (3) year
 	@@
 
 ###############################################
 # December 10, 2014
 ###############################################
 
+# Month-name, day, year (e.g. "December 10, 2014" or "Sept. 04 2014").
 @PRE
 <1,1> var("month");
 <3,3> var("day");
@@ -100,17 +106,18 @@ single();
 
 @RULES
 _date <-
-	_xALPHA		### (1)
-	\. [opt]	### (2)
-	_xNUM		### (3)
-	\, [opt]	### (4)
-	_xNUM		### (5)
+	_xALPHA		### (1) month name
+	\. [opt]	### (2) optional period (abbrev.)
+	_xNUM		### (3) day
+	\, [opt]	### (4) optional comma
+	_xNUM		### (5) year
 	@@
 
 ###############################################
 # july 3rd 2013
 ###############################################
 
+# Month-name, ordinal day, year (e.g. "july 3rd 2013").
 @PRE
 <1,1> var("month");
 <4,4> var("year");
@@ -123,8 +130,8 @@ single();
 
 @RULES
 _date <-
-	_xALPHA		### (1)
-	_ordinal	### (2)
-	\, [opt]	### (3)
-	_xNUM		### (4)
+	_xALPHA		### (1) month name
+	_ordinal	### (2) ordinal day (e.g. 3rd)
+	\, [opt]	### (3) optional comma
+	_xNUM		### (4) year
 	@@

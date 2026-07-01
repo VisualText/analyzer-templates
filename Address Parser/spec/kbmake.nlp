@@ -1,17 +1,19 @@
 ###############################################
 # FILE: kbmake
-# SUBJ: comment
+# SUBJ: Create a KB concept for each _address and attach its collected attributes
 # AUTH: Kruthika
 # CREATED: 2023-11-23 20:50:9
 # MODIFIED:
 ###############################################
 
 @NODES _ROOT 
+# For every _address node, create a numbered child "address" concept under the
+# addresses KB and copy the node's fields onto it via AddAttrs().
 @POST
 N("con",1) = MakeCountCon(G("addresses"),"address");
 AddAttrs(N(1));
 @RULES
 _xNIL <-
-	_address	### (1)
+	_address	### (1) the parsed address node
 	@@
 

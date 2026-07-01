@@ -1,19 +1,24 @@
 ###############################################
 # FILE: sentenceEnders
-# SUBJ: comment
+# SUBJ: Detect terminal punctuation and mark sentence-ending boundaries
 # AUTH: David de Hilster
 # CREATED: 2024-5-31 14:34:15
 # MODIFIED:
 ###############################################
 
+# Find a "." "?" or "!" that terminates a sentence: it must directly follow a
+# word/number and be followed by whitespace or the end of text. Interior dots
+# already hidden by the abbreviations/initials passes are skipped. Only the
+# punctuation itself (element 2) is wrapped as the _endSent boundary marker.
+
 @NODES _paragraph
 
 @POST
-singler(2,2);
+singler(2,2);	# make _endSent span only element 2 (the punctuation)
 
 @RULES
 _endSent <-
-    _xWILD [s one match=(_xALPHA _xNUM)]					### (1)
-    _xWILD [one trig match=(\. \? \!)]						### (2)
-    _xWILD [one match=(_xWHITE _xALPHA _xNUM _xEND _xCTRL)]	### (3)
+    _xWILD [s one match=(_xALPHA _xNUM)]					### (1) word/number before the mark
+    _xWILD [one trig match=(\. \? \!)]						### (2) the terminal punctuation (trigger)
+    _xWILD [one match=(_xWHITE _xALPHA _xNUM _xEND _xCTRL)]	### (3) whitespace / end that follows
     @@

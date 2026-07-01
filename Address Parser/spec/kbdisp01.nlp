@@ -1,6 +1,6 @@
 ###############################################
 # FILE: kbdisp01
-# SUBJ: comment
+# SUBJ: Dump the addresses KB subtree for inspection/debugging
 # AUTH: Kruthika
 # CREATED: 2023-11-23 21:8:7
 # MODIFIED:
@@ -8,6 +8,7 @@
 
 @CODE
 
+# Write the "addresses" concept and its children to the KB dump for review.
 DisplayKB(G("addresses"),1);
 
 @@CODE

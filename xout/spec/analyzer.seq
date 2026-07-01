@@ -1,4 +1,4 @@
 tokenize	nil	# Gen:   Convert input to token list
-nlp	Lines	# comment
-nlp	words	# comment
-nlp	output	# comment
+nlp	Lines	# Group tokens into line nodes
+nlp	words	# Mask each alphanumeric token as x/X
+nlp	output	# Write masked text to input/X/

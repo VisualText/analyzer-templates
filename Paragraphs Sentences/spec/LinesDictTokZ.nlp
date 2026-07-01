@@ -5,27 +5,35 @@
 # Date of this version: 4/29/2023
 ###################################################
 
+# Group the raw tokens produced by dicttokz into _LINE nodes, one per
+# source line. A line runs from the start (or a previous newline) up to
+# the next newline token (a token whose "NL" variable is set).
+
 @NODES _ROOT
 
+# First line only: from the very start of input up to (but not including)
+# the first newline token.
 @PRE
-<2,2> varz("NL");
+<2,2> varz("NL");	# element 2 is NOT a newline
 
 @RULES
 _LINE <-
-    _xSTART			### (1)
-    _xWILD [plus]	### (2)
+    _xSTART			### (1) beginning of the token stream
+    _xWILD [plus]	### (2) one or more non-newline tokens
     @@
 
+# Subsequent lines: a newline token starts the line and the run continues
+# until the next newline. The line's own "NL" value is carried onto _LINE.
 @PRE
-<1,1> var("NL");
-<2,2> varz("NL");
+<1,1> var("NL");	# element 1 IS a newline (line boundary)
+<2,2> varz("NL");	# element 2 is not another newline
 
 @POST
-S("NL") = N("NL",1);
+S("NL") = N("NL",1);	# copy the newline marker onto the _LINE node
 single();
 
 @RULES
 _LINE <-
-    _xWILD [one]	### (1)
-    _xWILD [star]	### (2)
+    _xWILD [one]	### (1) the leading newline token
+    _xWILD [star]	### (2) rest of the line up to the next newline
     @@

@@ -1,15 +1,19 @@
 ###############################################
 # FILE: sentences.pat
-# SUBJ: comment
+# SUBJ: Group tokens up to a boundary marker into _sentence nodes
 # AUTH: David de Hilster
 # CREATED: 22/Apr/20 18:24:07
 # MODIFIED:
 ###############################################
 
+# Build a _sentence from everything up to and including the next boundary,
+# where a boundary is an _endSent marker (from sentenceEnders) or a
+# _BLANKLINE. The [fail=...] wildcard consumes tokens until it hits one.
+
 @NODES _paragraph
 
 @RULES
 _sentence <-
-    _xWILD [fail=(_endSent _BLANKLINE)]			### (1)
-    _xWILD [one match=(_endSent _BLANKLINE)]	### (2)
+    _xWILD [fail=(_endSent _BLANKLINE)]			### (1) sentence body, up to a boundary
+    _xWILD [one match=(_endSent _BLANKLINE)]	### (2) the boundary that closes the sentence
     @@

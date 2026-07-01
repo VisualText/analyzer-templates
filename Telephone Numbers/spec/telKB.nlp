@@ -1,6 +1,6 @@
 ###############################################
 # FILE: telKB
-# SUBJ: comment
+# SUBJ: Store each matched telephone as a numbered KB concept
 # AUTH: Kruthika
 # CREATED: 2023-11-6 14:22:11
 # MODIFIED:
@@ -8,11 +8,14 @@
 
 @PATH _ROOT _LINE
 
+# For every _telephone node, add a numbered "telephone" concept under the
+# "telephones" root concept and copy its attributes (area/prefix/station/type)
+# onto that concept. MakeCountCon / PNCopyAttrsToCon are defined in KBFuncs/TreeFuncs.
 @POST
 N("con",1) = MakeCountCon(G("telephones"),"telephone");
 PNCopyAttrsToCon(N(1),N("con",1));
 
 @RULES
 _xNIL <-
-	_telephone	### (1)
+	_telephone	### (1) each matched telephone node
 	@@

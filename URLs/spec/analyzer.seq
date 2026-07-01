@@ -1,16 +1,16 @@
 dicttok	nil	# Gen:   Convert input to token list
-nlp	KBFuncs	# comment
-nlp	funcs	# comment
-nlp	kbinit	# comment
-nlp	Lines	# comment
-nlp	removeblankline	# comment
-nlp	Links	# comment
-nlp	Link1	# comment
-nlp	Link2	# comment
-nlp	Link3	# comment
-nlp	Link4	# comment
-nlp	Link5	# comment
-nlp	Link6	# comment
-nlp	Link7	# comment
-nlp	Link8	# comment
-nlp	output	# comment
+nlp	KBFuncs	# Library of KB/link helper functions
+nlp	funcs	# Analyzer-specific helpers (attrs, JSON output)
+nlp	kbinit	# Grab the Links concept from the KB
+nlp	Lines	# Segment text into _LINE / _BLANKLINE nodes
+nlp	removeblankline	# Drop blank lines
+nlp	Links	# Match domain tails (.name / .name.cc)
+nlp	Link1	# Flag lines that contain a link as _conlink
+nlp	Link2	# Match full schemed URLs (scheme://host/path)
+nlp	Link3	# Trim trailing punctuation off a link (_extra)
+nlp	Link4	# Match sub-domain host URLs with a page path
+nlp	Link5	# Match bare host URLs and set domain parts
+nlp	Link6	# More bare-host URL shapes and domain parts
+nlp	Link7	# Build a link concept and attach its attributes
+nlp	Link8	# Dump the Links KB concept for inspection
+nlp	output	# Write extracted links to output.json

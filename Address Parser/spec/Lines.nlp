@@ -8,14 +8,17 @@
 
 @NODES _ROOT
 
+# Segment the text into lines so later passes can work line by line.
 @RULES
 
+# A blank line: optional spaces/tabs/CR up to the newline.
 _BLANKLINE <-
-    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1)
-    \n ### (2)
+    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1) leading whitespace
+    \n ### (2) the terminating newline
     @@
 
+# A non-blank line: everything up to (and including) the newline or end of text.
 _LINE <-
-    _xWILD [min=0 max=0 fails=(\r \n)] ### (1)
-    _xWILD [one match=(\n _xEND)] ### (2)
+    _xWILD [min=0 max=0 fails=(\r \n)] ### (1) the line content
+    _xWILD [one match=(\n _xEND)] ### (2) newline or end-of-text terminator
     @@

@@ -6,16 +6,20 @@
 # Copyright 1999-2004, Text Analysis International
 ###################################################
 
+# Group the token stream under the root into _LINE (and _BLANKLINE) nodes so the
+# email rules can run per line via the @PATH _ROOT _LINE context.
 @NODES _ROOT
 
 @RULES
 
+# A line that is empty apart from optional spaces/tabs/CR, ending in a newline.
 _BLANKLINE <-
-    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1)
-    \n ### (2)
+    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1) optional leading whitespace
+    \n ### (2) terminating newline
     @@
 
+# A non-blank line: everything up to (but not including) the line break.
 _LINE <-
-    _xWILD [min=0 max=0 fails=(\r \n)] ### (1)
-    _xWILD [one match=(\n _xEND)] ### (2)
+    _xWILD [min=0 max=0 fails=(\r \n)] ### (1) run of characters that are not CR/LF
+    _xWILD [one match=(\n _xEND)] ### (2) newline or end-of-text terminator
     @@

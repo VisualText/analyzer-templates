@@ -1,14 +1,20 @@
 ###############################################
 # FILE: output
-# SUBJ: comment
+# SUBJ: Write the masked line nodes out to input/X/<name>
 # AUTH: David de Hilster
 # CREATED: 2023-2-7 16:7:54
 # MODIFIED:
 ###############################################
 
+# After every alphanumeric token has been x-ed out, dump the resulting
+# tree back to disk as plain text. One line node is written per output
+# line, into a mirror file under the input/X/ folder.
+
 @CODE
 
+# Start at the first top-level (line) node under the root.
 L("node") = pndown(pnroot());
+# Destination: input/X/<inputhead>.<inputtail>, mirroring the source name.
 L("filename") = G("$apppath") + "\\input\\X\\" + G("$inputhead") + "." + G("$inputtail");
 
 L("file") = openfile(L("filename"));
@@ -18,6 +24,7 @@ L("file") = openfile(L("filename"));
 # L("debug") << L("filename") << "\n";
 # closefile(L("debug"));
 
+# Emit each line node's masked text, one per line.
 while (L("node")) {
 	L("file") << pnvar(L("node"),"$treetext") << "\n";
 	L("node") = pnnext(L("node"));

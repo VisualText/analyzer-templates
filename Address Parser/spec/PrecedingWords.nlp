@@ -1,6 +1,6 @@
 ###############################################
 # FILE: PrecedingWords
-# SUBJ: comment
+# SUBJ: Mark where an address begins by flagging its starting token ("starting")
 # AUTH: Kruthika
 # CREATED: 2023-11-22 19:37:0
 # MODIFIED:
@@ -8,6 +8,8 @@
 
 @PATH _ROOT _LINE
 
+# After an address-cue word (KB "address" attribute), the following number
+# starts the address (e.g. "address is 123 ...").
 @PRE
 <1,1> var("address");
 
@@ -15,18 +17,22 @@
 N("starting",2)=1;
 @RULES
 _xNIL <-
-	_xWILD [min=1 max=0 match=(_xALPHA)]	### (1)
-	_xNUM									### (2)
+	_xWILD [min=1 max=0 match=(_xALPHA)]	### (1) the cue word(s)
+	_xNUM									### (2) the number that starts the address
 	@@
 
+# A Highway Contract / Rural Route / PO box keyword followed by a number also
+# starts an address (e.g. "HC 72", "RR 2", "PO BOX").
 @POST
 N("starting",1)=1;
 
 @RULES
 _xNIL <-
-	_xWILD [one match=(HC RR PO)]	### (1)
-	_xNUM							### (2)
+	_xWILD [one match=(HC RR PO)]	### (1) route/box keyword
+	_xNUM							### (2) its number
 	@@
+# Otherwise a lone number starts an address, unless it is actually part of a
+# pincode (part1/part2/pin already flagged by the pincode pass).
 @CHECK
 if(pnvar(N(1),"part1")||pnvar(N(1),"part2")||pnvar(N(1),"pin"))
 fail();
@@ -36,5 +42,5 @@ succeed();
 N("starting",1)=1;
 @RULES
 _xNIL <-
-	_xNUM
+	_xNUM							### (1) leading number that starts the address
 	@@

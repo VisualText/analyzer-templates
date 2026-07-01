@@ -1,17 +1,19 @@
 ###############################################
 # FILE: removelines
-# SUBJ: comment
+# SUBJ: Flatten each _LINE node, splicing its tokens back up into the root
 # AUTH: Kruthika
 # CREATED: 2023-11-20 20:56:35
 # MODIFIED:
 ###############################################
 
 @NODES _ROOT
+# Replace each _LINE node with its children so the tokens sit directly under
+# _ROOT for the address-grouping passes.
 @POST
 splice(1,1);
 
 @RULES
 _xNIL <-
-	_LINE	### (1)
+	_LINE	### (1) the line node to flatten
 	@@
 

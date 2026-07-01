@@ -1,6 +1,6 @@
 ###############################################
 # FILE: ORDINALS
-# SUBJ: comment
+# SUBJ: Recognize ordinal day numbers (1st, 2nd...) and am/pm markers
 # AUTH: David de Hilster
 # CREATED: 2024-6-1 11:44:34
 # MODIFIED:
@@ -8,16 +8,20 @@
 
 @NODES _ROOT
 
+# Build an _ordinal node from a number followed by an ordinal suffix
+# (e.g. "3rd", "21st"); store the numeric value in the "num" attribute.
 @POST
 S("num") = num(N("$text",1));
 single();
 
 @RULES
 _ordinal <-
-	_xNUM								### (1)
-	_xWILD [one match=(st nd rd th)]	### (2)
+	_xNUM								### (1) the number
+	_xWILD [one match=(st nd rd th)]	### (2) ordinal suffix st/nd/rd/th
 	@@
 
+# Recognize am/pm meridiem markers in both plain (am/pm)
+# and punctuated (a.m./p.m.) forms for later use by the times pass.
 @RULES
 _am <- am @@
 _pm <- pm @@

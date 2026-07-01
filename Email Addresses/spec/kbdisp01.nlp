@@ -1,6 +1,6 @@
 ###############################################
 # FILE: kbdisp01
-# SUBJ: comment
+# SUBJ: Dump the collected email-address KB for inspection/debugging
 # AUTH: Kruthika
 # CREATED: 2023-10-28 21:55:36
 # MODIFIED:
@@ -8,6 +8,7 @@
 
 @CODE
 
+# Print the "Emailaddrs" KB subtree (all stored addresses and their fields).
 DisplayKB(G("email"),1);
 
 @@CODE

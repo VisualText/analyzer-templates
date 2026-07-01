@@ -1,18 +1,19 @@
 ###############################################
 # FILE: email3
-# SUBJ: comment
+# SUBJ: Merge the _email and its trailing _word into one _emailn, carrying fields
 # AUTH: Kruthika
 # CREATED: 2023-10-28 19:59:31
 # MODIFIED:
 ###############################################
 
-
+# Combine the base _email with the collapsed _word (extra domain tail) into a
+# single _emailn, copying the local name and domain name up onto it.
 @PATH _ROOT _LINE _emailx
 @POST
 
-X("local",3)= pnvar(N(1),"local");
-X("domainname")=pnvar(N(1),"domainname");
-splice(1,1);
+X("local",3)= pnvar(N(1),"local");            # carry local name onto _emailn
+X("domainname")=pnvar(N(1),"domainname");     # carry domain name onto _emailn
+splice(1,1);                                   # merge element 1 (_email) into the group
 @RULES
 	_emailn <-	
 		_email

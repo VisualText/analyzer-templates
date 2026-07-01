@@ -1,6 +1,6 @@
 ###############################################
 # FILE: RemoveSpecialChars
-# SUBJ: comment
+# SUBJ: Strip punctuation, and drop ordinal suffixes (1ST, 2ND, 3RD, 4TH) after numbers
 # AUTH: Kruthika
 # CREATED: 2023-11-20 19:35:12
 # MODIFIED:
@@ -8,6 +8,7 @@
 
 @PATH _ROOT _LINE
 
+# Delete stray punctuation tokens from the line.
 @POST
 excise(1,1);
 noop();
@@ -15,9 +16,11 @@ noop();
 @RULES
 
 _punct <-
-    _xPUNCT [s] ### (1)
+    _xPUNCT [s] ### (1) one or more punctuation tokens to excise
     @@
 
+# For ordinals like "1ST", "2ND": excise the trailing ST/ND/RD/TH so the number
+# (e.g. house number 1ST ST -> 1) survives on its own.
 @POST
 excise(2,2);
 noop();
@@ -25,6 +28,6 @@ noop();
 @RULES
 
 _xNIL <-
-    _xNUM								### (1)
-    _xWILD [one match=(ST ND RD TH)]	### (2)
+    _xNUM								### (1) the number (kept)
+    _xWILD [one match=(ST ND RD TH)]	### (2) the ordinal suffix (excised)
     @@

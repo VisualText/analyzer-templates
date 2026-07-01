@@ -1,6 +1,6 @@
 ###############################################
 # FILE: kbinit
-# SUBJ: comment
+# SUBJ: Initialize the knowledge base for collecting email addresses
 # AUTH: Kruthika
 # CREATED: 2023-10-27 21:47:0
 # MODIFIED:
@@ -8,6 +8,9 @@
 
 @CODE
 
+# Grab (creating if needed) the "Emailaddrs" concept under the KB root.
+# G("email") is the parent node under which every matched email address
+# is later stored as a child concept (see email7 / MakeCountCon).
 # G("kb") = getconcept(findroot(),"kb");
 # SaveKB("mykb.kbb",G("kb"),2);
 G("email") = getconcept(findroot(),"Emailaddrs");

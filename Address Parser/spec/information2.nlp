@@ -1,12 +1,15 @@
 ###############################################
 # FILE: information2
-# SUBJ: comment
+# SUBJ: Extract street type/suffix from a USPS street word and back-fill street name/number
 # AUTH: Kruthika
 # CREATED: 2023-11-22 19:16:10
 # MODIFIED:
 ###############################################
 
 @PATH _ROOT _address
+# Trigger on a word carrying a KB "usps" attribute (a street-type word such as
+# Street/Lane/Road). Store its USPS abbreviation as streetsuff and the literal
+# word as streettype, then walk back to capture the street name and number.
 @PRE
 <1,1> var("usps");
 @POST
@@ -15,5 +18,5 @@ X("streettype",2)=N("$text",1);
 StreetName(N(1),X(2));
 @RULES
 _xNIL <-
-	_xALPHA	### (1)
+	_xALPHA	### (1) the street-type word (e.g. Street, Lane, Road)
 	@@

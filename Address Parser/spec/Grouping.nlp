@@ -1,17 +1,18 @@
 ###############################################
 # FILE: Grouping
-# SUBJ: comment
+# SUBJ: Group tokens from the address start through the pincode into an _address node
 # AUTH: Kruthika
 # CREATED: 2023-11-20 20:56:2
 # MODIFIED:
 ###############################################
 
 @NODES _ROOT
+# The span must begin on a token flagged as "starting" by the PrecedingWords pass.
 @PRE
 <1,1> var("starting");
 @RULES
 _address <-
-	_xWILD [one match=(_xALPHA _xNUM)]	### (1)
-	_xWILD [plus match=(_xALPHA _xNUM)]	### (2)
-	_pincode							### (3)
+	_xWILD [one match=(_xALPHA _xNUM)]	### (1) the first address token (the "starting" token)
+	_xWILD [plus match=(_xALPHA _xNUM)]	### (2) the middle words/numbers (street, city, state...)
+	_pincode							### (3) the ZIP/pincode that ends the address
 	@@

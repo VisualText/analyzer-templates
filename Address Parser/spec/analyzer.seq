@@ -1,18 +1,18 @@
 dicttok	nil	# Gen:   Convert input to token list
-nlp	KBFuncs	# comment
-nlp	funcs	# comment
-nlp	kbinit	# comment
-nlp	Lines	# comment
-nlp	RemoveWhiteSpace	# comment
-nlp	pincode	# comment
-nlp	RemoveSpecialChars	# comment
-nlp	PrecedingWords	# comment
-nlp	removelines	# comment
-nlp	Grouping	# comment
-nlp	information1	# comment
-nlp	information2	# comment
-nlp	information3	# comment
-nlp	countryname	# comment
-nlp	kbmake	# comment
-nlp	kbdisp01	# comment
-nlp	output	# comment
+nlp	KBFuncs	# Shared knowledge-base helper functions
+nlp	funcs	# Analyzer-specific helper functions (attributes, city/street lookup, JSON output)
+nlp	kbinit	# Create the root "addresses" concept in the KB
+nlp	Lines	# Split the text into lines
+nlp	RemoveWhiteSpace	# Remove white space tokens within each line
+nlp	pincode	# Recognize ZIP / pincodes (5-7 digits, optionally hyphenated)
+nlp	RemoveSpecialChars	# Remove punctuation and ordinal suffixes (1ST, 2ND, ...)
+nlp	PrecedingWords	# Mark where an address starts
+nlp	removelines	# Flatten lines back into the root sequence
+nlp	Grouping	# Group tokens from an address start through the pincode into an _address node
+nlp	information1	# Extract route/box/state/city fields from each address
+nlp	information2	# Extract street type, suffix, name and number
+nlp	information3	# Extract house number, direction and pincode fields
+nlp	countryname	# Capture the country name following an address
+nlp	kbmake	# Build a KB concept per address and attach its attributes
+nlp	kbdisp01	# Dump the addresses KB for inspection
+nlp	output	# Write the addresses out as output.json

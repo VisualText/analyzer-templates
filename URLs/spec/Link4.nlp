@@ -1,32 +1,35 @@
 ###############################################
 # FILE: Link4
-# SUBJ: comment
+# SUBJ: Match a sub-domain host URL with a page path and split its parts
 # AUTH: Kruthika
 # CREATED: 2023-11-2 10:17:37
 # MODIFIED:
 ###############################################
 
 @PATH _ROOT _conlink
+# Match "sub.domain.tld/path" (e.g. music.youtube.com/channel/...) with no
+# scheme and store subdomain (1), domain (3), tld/country (4) and the
+# page path (6).
 @POST
-S("domain")=N("$text",3);
-S("subdomain")=N("$text",1);
-S("tld")=N("domain",4);
+S("domain")=N("$text",3);	# registered name, e.g. youtube
+S("subdomain")=N("$text",1);	# host prefix, e.g. music / www
+S("tld")=N("domain",4);		# top-level domain, e.g. com
 if(N("country",4))
 {
-S("country")=N("country",4);
+S("country")=N("country",4);	# country-code TLD when present
 }
 if(N("countryname",4))
 {
-	S("countryname")=N("countryname",4);
+	S("countryname")=N("countryname",4);	# expanded country name
 }
-S("pagepath")=N("$text",6);
+S("pagepath")=N("$text",6);	# path after the host
 single();
 @RULES
 _link <-
-	_xALPHA																			### (1)
-	\.																				### (2)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3)
-	_domain																			### (4)
+	_xALPHA																			### (1) sub-domain
+	\.																				### (2) dot
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3) domain name
+	_domain																			### (4) ".tld(.cc)" domain tail
 	\/
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) _domain)]	### (5)
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) _domain)]	### (5) page path
 	@@

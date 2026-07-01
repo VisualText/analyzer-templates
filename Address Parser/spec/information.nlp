@@ -1,6 +1,6 @@
 ###############################################
 # FILE: information
-# SUBJ: comment
+# SUBJ: Earlier variant of the route/box + state/city extraction (see information1)
 # AUTH: Kruthika
 # CREATED: 2023-11-23 17:9:50
 # MODIFIED:
@@ -8,6 +8,7 @@
 
 @PATH _ROOT _address
 
+# Rural Route address, e.g. "RR 2 BOX 152": store route and box numbers.
 @POST
 X("routenum") = N("$text",2)+" "+N("$text",3);
 X("boxnum") = N("$text",5)+" "+N("$text",6);
@@ -16,14 +17,15 @@ single();
 
 @RULES
 _ruralroute <-
-	RR		### (1)
-	_xNUM	### (2)
-	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3)
-	BOX		### (3)
-	_xNUM	### (4)
-	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (6)
+	RR		### (1) the "RR" keyword
+	_xNUM	### (2) the route number
+	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3) optional route letter
+	BOX		### (3) the "BOX" keyword
+	_xNUM	### (4) the box number
+	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (6) optional box letter
 	@@
 
+# Highway Contract address, e.g. "HC 72 BOX 293": store route and box numbers.
 @POST
 X("routenum") =N("$text",2)+" "+N("$text",3);
 X("boxnum") =  N("$text",5)+" "+N("$text",6);
@@ -32,14 +34,15 @@ single();
 
 @RULES
 _highwayContract <-
-	HC		### (1)
-	_xNUM	### (2)
-	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3)
-	BOX		### (3)
-	_xNUM	### (4)
-	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (6)
+	HC		### (1) the "HC" keyword
+	_xNUM	### (2) the contract number
+	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3) optional letter
+	BOX		### (3) the "BOX" keyword
+	_xNUM	### (4) the box number
+	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (6) optional box letter
 	@@
 
+# Plain PO Box address: store the box number.
 @POST
 X("boxnum") = N("$text",2)+" "+N("$text",3);
 # AddPostBox(X("con"),"postbox",L("num2"));
@@ -47,12 +50,13 @@ single();
 
 @RULES
 _postbox <-
-	PO
-	BOX										### (1)
-	_xNUM									### (2)
-	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3)
+	PO										### the "PO" keyword
+	BOX										### (1) the "BOX" keyword
+	_xNUM									### (2) the box number
+	_xWILD [min=0 max=1 match=(_xCAPLET)]	### (3) optional box letter
 	@@
 
+# Spelled-out state (KB "state") before the pincode: record it and find the city.
 @PRE
 <1,1> var("state");
 @POST
@@ -63,9 +67,10 @@ FindCity(N(1),X(2));
 
 @RULES
 _xNIL <-
-	_xALPHA
-	_pincode
+	_xALPHA		### (1) the state word
+	_pincode	### (2) the following pincode
 	@@
+# State abbreviation (KB "abbrev") before the pincode: record it and find the city.
 @PRE
 <1,1> var("abbrev");
 @POST
@@ -74,10 +79,11 @@ FindCity(N(1),X(2));
 
 @RULES
 _xNIL <-
-	_xALPHA
-	_pincode
+	_xALPHA		### (1) the state abbreviation
+	_pincode	### (2) the following pincode
 	@@
 
+# State abbreviation not directly followed by a pincode: still record it and find the city.
 @PRE
 <1,1> var("abbrev");
 @POST
@@ -87,5 +93,5 @@ FindCity(N(1),X(2));
 
 @RULES
 _xNIL <-
-	_xALPHA
+	_xALPHA		### (1) the state abbreviation
 	@@

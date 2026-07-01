@@ -1,17 +1,19 @@
 ###############################################
 # FILE: Link1
-# SUBJ: comment
+# SUBJ: Rename lines that contain a link to _conlink
 # AUTH: Kruthika
 # CREATED: 2023-6-3 11:6:33
 # MODIFIED:
 ###############################################
 
-@NODES _ROOT 
+@NODES _ROOT
+# Any _LINE flagged with the "link" attribute (set in Links) is renamed
+# _conlink so later passes only descend into lines that hold a URL.
 @PRE
 <1,1> var("link");
 @POST
-pnrename(N(1),"_conlink");
+pnrename(N(1),"_conlink");	# retag the line node as _conlink
 @RULES
 _xNIL <-
-	_LINE	### (1)
+	_LINE	### (1) a line already marked as containing a link
 	@@

@@ -1,17 +1,20 @@
 ###############################################
 # FILE: email5
-# SUBJ: comment
+# SUBJ: Rename the finished _emailx group back to _email, flagged as special
 # AUTH: Kruthika
 # CREATED: 2023-10-28 20:11:2
 # MODIFIED:
 ###############################################
 
+# Handle the _emailx whose only remaining child is the collapsed _word: splice
+# it in, then rename the parent _emailx node back to _email (flagged "spec") so
+# downstream passes treat it uniformly with other addresses.
 @PATH _ROOT _LINE _emailx
 
 @POST
-splice(1,1);
-pnrename(X(3),"_email")
-X("spec",3)=1;
+splice(1,1);                 # merge the lone _word into the group
+pnrename(X(3),"_email")      # rename parent _emailx -> _email
+X("spec",3)=1;               # mark as a spliced/special email
 
 @RULES
 	_emailn <-	

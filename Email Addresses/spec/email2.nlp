@@ -1,17 +1,19 @@
 ###############################################
 # FILE: email2
-# SUBJ: comment
+# SUBJ: Wrap an _email plus its trailing ".label" tokens into an _emailx group
 # AUTH: Kruthika
 # CREATED: 2023-10-28 18:18:2
 # MODIFIED:
 ###############################################
 
-
+# When CheckMore (in funcs) tagged following ".label" tokens with "ispart",
+# gather the _email and those tokens under a single _emailx node so the extra
+# domain segments can be merged in email3/email4.
 @PATH _ROOT _LINE
 @PRE
-<2,2> var("ispart");
+<2,2> var("ispart");   # element 2 must be flagged as part of the domain
 @RULES
 _emailx <-
 	_email
-	_xWILD [min=1 max=0 match=(\. _xALPHA)]
+	_xWILD [min=1 max=0 match=(\. _xALPHA)]   ### trailing ".label" domain segments
 	@@

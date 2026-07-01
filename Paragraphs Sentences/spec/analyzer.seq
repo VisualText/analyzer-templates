@@ -1,8 +1,8 @@
 dicttokz	nil	# Gen:   Convert input to token list
-nlp	LinesDictTokZ	# comment
-nlp	paragraphs	# comment
-nlp	linesRemove	# comment
-nlp	abbreviations	# comment
-nlp	initials	# comment
-nlp	sentenceEnders	# comment
-nlp	sentences	# comment
+nlp	LinesDictTokZ	# Group tokens into _LINE nodes (one per source line)
+nlp	paragraphs	# Group consecutive lines into _paragraph nodes
+nlp	linesRemove	# Dissolve _LINE nodes into flat paragraph token lists
+nlp	abbreviations	# Protect dotted abbreviations (e.g. U.S.) from sentence enders
+nlp	initials	# Protect middle initials (e.g. R.) from sentence enders
+nlp	sentenceEnders	# Mark terminal . ? ! as sentence boundaries
+nlp	sentences	# Group tokens up to each boundary into _sentence nodes

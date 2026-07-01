@@ -1,6 +1,6 @@
 ###############################################
 # FILE: kbinit
-# SUBJ: comment
+# SUBJ: Create the root "addresses" concept that collects all parsed addresses
 # AUTH: Kruthika
 # CREATED: 2023-11-23 20:49:18
 # MODIFIED:
@@ -9,6 +9,8 @@
 
 @CODE
 
+# Find or create the "addresses" concept under the KB root; each parsed
+# address will later be added as a child concept of this node.
 G("addresses") = findconcept(findroot(),"addresses");
 if (!G("addresses")) G("addresses") = makeconcept(findroot(),"addresses");
 

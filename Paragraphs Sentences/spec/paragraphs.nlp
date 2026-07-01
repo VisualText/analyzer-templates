@@ -1,19 +1,23 @@
 ###############################################
 # FILE: paragraphs
-# SUBJ: comment
+# SUBJ: Group consecutive text lines into _paragraph nodes
 # AUTH: David de Hilster
 # CREATED: 2024-5-31 14:33:19
 # MODIFIED:
 ###############################################
 
+# Collect runs of adjacent _LINE nodes into a single _paragraph. A blank
+# line separates paragraphs: a line whose "NL" count is 2 (two newlines in
+# a row) marks a paragraph break, so it is excluded from the run.
+
 @NODES _ROOT
 
 @PRE
-<2,2> varne("NL",2);
+<2,2> varne("NL",2);	# next line must NOT be a blank-line separator (NL != 2)
 
 @RULES
 _paragraph <-
-	_LINE						### (1)
-	_xWILD [star match=(_LINE)]	### (2)
+	_LINE						### (1) the first line of the paragraph
+	_xWILD [star match=(_LINE)]	### (2) any further non-blank lines that follow
 	@@
     

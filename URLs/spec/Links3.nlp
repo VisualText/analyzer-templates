@@ -1,21 +1,24 @@
 ###############################################
 # FILE: Links3
-# SUBJ: comment
+# SUBJ: Match a bare (scheme-less) host URL and log it to a file
 # AUTH: Kruthika
 # CREATED: 2023-6-3 11:20:51
 # MODIFIED:
 ###############################################
+# Note: not part of the active analyzer sequence.
 
 @PATH _ROOT _conlink
 
+# Match a whitespace-delimited host such as "www.example.com/path" (no
+# scheme) as _link and append the host text to "Resume Links.txt".
 @POST
 "Resume Links.txt"<<"Links "<<N("$text",2)+N("$text",3)+N("$text",4)<<"\n";
 single();
 @RULES
 _link <-
-	_xWILD [one match=(_xSTART _xWHITE)]					### (1)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	
-	_domain ### (2)
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]
-	_xWILD [fail=(_xWHITE \n \r)]							### (3)
+	_xWILD [one match=(_xSTART _xWHITE)]					### (1) start of line or whitespace boundary
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	### host + path characters
+	_domain ### (2) recognized ".name(.cc)" domain tail
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	### trailing path characters
+	_xWILD [fail=(_xWHITE \n \r)]							### (3) run to next whitespace
 	@@

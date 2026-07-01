@@ -8,14 +8,17 @@
 
 @NODES _ROOT
 
+# Segment the input into line nodes. A run of optional spaces/tabs/CR
+# followed by a newline is a _BLANKLINE; any other text up to the next
+# newline (or end of file) becomes a _LINE.
 @RULES
 
 _BLANKLINE <-
-    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1)
-    \n ### (2)
+    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1) optional whitespace
+    \n ### (2) terminating newline
     @@
 
 _LINE <-
-    _xWILD [min=0 max=0 fails=(\r \n)] ### (1)
-    _xWILD [one match=(\n _xEND)] ### (2)
+    _xWILD [min=0 max=0 fails=(\r \n)] ### (1) line body (no CR/LF)
+    _xWILD [one match=(\n _xEND)] ### (2) newline or end of file
     @@

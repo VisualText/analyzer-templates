@@ -1,12 +1,14 @@
 ###############################################
 # FILE: Link8
-# SUBJ: comment
+# SUBJ: Dump the collected Links KB concept for inspection
 # AUTH: Kruthika
 # CREATED: 2023-11-2 15:56:15
 # MODIFIED:
 ###############################################
 @CODE
 
+# Display the links concept and one level of its children (the per-link
+# concepts with their attributes) to the KB dump.
 DisplayKB(G("links"),1);
 
 @@CODE

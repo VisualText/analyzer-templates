@@ -1,19 +1,25 @@
 ###############################################
 # FILE: words
-# SUBJ: comment
+# SUBJ: Collapse each alphanumeric token to a single x/X at the root level
 # AUTH: David de Hilster
 # CREATED: 2023-2-7 15:40:23
 # MODIFIED:
 ###############################################
 
+# Simpler root-level variant of the word masker: each alphanumeric token
+# is replaced by one character ("X" if the whole token is uppercase,
+# otherwise "x") rather than a same-length run.
+
 @NODES _ROOT
 
 @POST
+	# All-caps tokens become "X"; anything else becomes "x".
 	if (strisupper(N("$text")))
 		pnrename(N(1),"X");
 	else
 		pnrename(N(1),"x");
 @RULES
+# Match a single alphanumeric token directly under the root.
 _xNIL <-
 	_xALPHA
 	@@

@@ -1,24 +1,32 @@
 ###############################################
 # FILE: email1
-# SUBJ: comment
+# SUBJ: Core email-address recognizer: match local@domain.tld forms and set fields
 # AUTH: Kruthika
 # CREATED: 2023-10-26 22:47:38
 # MODIFIED:
 ###############################################
 
+# Runs over each _LINE. The several _email rule/@POST variants below cover the
+# different address shapes (single-dot tld, multi-dot / country-code domains,
+# and spelled-out "user at domain dot com" forms). Each variant records the
+# local name, domain name, tld, and (where present) country as S(...) attributes
+# on the new _email node. In the rules, element 2 = local name, 4 = domain, and
+# the alpha labels after each "." are the tld / country-code labels.
 @PATH _ROOT _LINE
 
+# Variant: local@domain.alpha.alpha where the last two labels form a
+# country-coded tld (e.g. ...edu.uk). Requires known domain + country labels.
 @CHECK
 if((pnvar(N(6),"country")||pnvar(N(6),"domain"))&&pnvar(N(8),"country"))
 succeed();
 else
 fail();
 @POST
-S("local")=N("$text",2);
-S("domainname")= N("$text",4);
-S("tld")=N("$text",6);
-S("cd")=N("$text",8);
-S("country")=N("country",8);
+S("local")=N("$text",2);        # text before the @
+S("domainname")= N("$text",4);  # domain label after the @
+S("tld")=N("$text",6);          # first tld label
+S("cd")=N("$text",8);           # country-domain label
+S("country")=N("country",8);    # resolved country name
 single();
 
 @RULES
@@ -33,11 +41,13 @@ _email <-
 	_xALPHA 
 	@@
 
+# Same shape but no country match: join all three labels into one domainname
+# and call CheckMore to absorb any further ".label" segments that follow.
 @POST
 S("local")=N("$text",2);
 S("domainname")= N("$text",4)+"."+N("$text",6)+"."+N("$text",8)
 S("non")=1;
-CheckMore(N(8));
+CheckMore(N(8));                # tag any trailing ".label" tokens for later absorption
 single();
 @RULES
 _email <-
@@ -50,15 +60,16 @@ _email <-
 	\. 
 	_xALPHA 
 	@@
+# Simple local@domain.tld: the single tld label must be a known domain/country.
 @CHECK
 if(pnvar(N(6),"country")||pnvar(N(6),"domain"))
 succeed();
 else
 fail();
 @POST
-S("local")=N("$text",2);
-S("dn")= N("$text",4);
-S("tld")=N("$text",6);
+S("local")=N("$text",2);   # local name
+S("dn")= N("$text",4);     # domain label
+S("tld")=N("$text",6);     # tld label
 single();
 @RULES
 _email <-
@@ -70,17 +81,21 @@ _email <-
 	_xALPHA						### (3)
 	@@
 ##
+# Spelled-out anti-spam form "domain dot label dot country" (the words "at" and
+# "dot" stand in for @ and .). This variant captures only the domain part;
+# email11 later prepends the local name. Requires a country-coded final label.
+# In the rule: 4 = domain label, 8 = tld label, 12 = country-code label.
 @CHECK
 if((pnvar(N(8),"country")||pnvar(N(8),"domain"))&&pnvar(N(12),"country"))
 succeed();
 else
 fail();
 @POST
-S("domainname")= N("$text",4);
-S("tld")=N("$text",8);
-S("cd")=N("$text",12);
-S("country")=N("country",12);
-S("nop")=1;
+S("domainname")= N("$text",4);   # domain label
+S("tld")=N("$text",8);           # tld label
+S("cd")=N("$text",12);           # country-domain label
+S("country")=N("country",12);    # resolved country
+S("nop")=1;                      # flag: spelled-out, country-coded variant
 single();
 
 @RULES
@@ -101,9 +116,11 @@ _email <-
 
 
 
+# Spelled-out three-label form with no country test: join the three labels
+# into a single domainname (flagged "nor").
 @POST
 S("domainname")= N("$text",4)+"."+N("$text",8)+"."+N("$text",12);
-S("nor")=1;
+S("nor")=1;                      # flag: spelled-out three-label variant
 single();
 
 @RULES
@@ -122,6 +139,8 @@ _email <-
 	_xALPHA											### (12)
 	@@
 
+# Spelled-out two-label form "domain dot tld"; the tld must be known
+# (flagged "nox"). email11 later prepends the local name.
 @CHECK
 if(pnvar(N(8),"country")||pnvar(N(8),"domain"))
 succeed();
@@ -129,9 +148,9 @@ else
 fail();
 @POST
 
-S("dn")= N("$text",4);
-S("tld")=N("$text",8);
-S("nox")=1;
+S("dn")= N("$text",4);   # domain label
+S("tld")=N("$text",8);   # tld label
+S("nox")=1;              # flag: spelled-out two-label variant
 single();
 @RULES
 _email <-

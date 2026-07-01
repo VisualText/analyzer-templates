@@ -1,6 +1,6 @@
 ###############################################
 # FILE: removeblankline
-# SUBJ: comment
+# SUBJ: Remove blank-line nodes left by the line segmenter
 # AUTH: Kruthika
 # CREATED: 2023-6-20 23:31:36
 # MODIFIED:
@@ -8,8 +8,8 @@
 
 @NODES _ROOT
 @POST
-excise(1,1);
+excise(1,1);	# delete the matched _BLANKLINE node
 @RULES
 _xNIL <-
-	_BLANKLINE	### (1)
+	_BLANKLINE	### (1) a blank line to discard
 	@@

@@ -1,6 +1,6 @@
 ###############################################
 # FILE: pincode
-# SUBJ: comment
+# SUBJ: Recognize ZIP/pincodes: a hyphenated ZIP+4 or a bare 5-7 digit number
 # AUTH: Kruthika
 # CREATED: 2023-11-20 20:3:46
 # MODIFIED:
@@ -8,6 +8,8 @@
 
 @PATH _ROOT _LINE
 
+# Hyphenated ZIP+4, e.g. 50441-1902. Mark the two numeric halves (part1/part2)
+# and flag the whole span as a pincode.
 @POST
 N("part1",1)=1;
 N("part2",3)=1;
@@ -15,11 +17,12 @@ N("pin",1)=1;
 single();
 @RULES
 _pincode <-
-	_xNUM	### (1)
-	\-		### (2)
-	_xNUM	### (3)
+	_xNUM	### (1) the 5-digit ZIP
+	\-		### (2) the hyphen
+	_xNUM	### (3) the +4 add-on
 	@@
 
+# A bare number qualifies as a pincode only if 5-7 characters long.
 @CHECK
 if(strlength(N("$text",1))>=5&&strlength(N("$text",1))<=7)
 succeed();
@@ -31,5 +34,5 @@ N("pin")=1;
 single();
 @RULES
 _pincode <-
-	_xNUM	### (1)
+	_xNUM	### (1) a standalone 5-7 digit ZIP/pincode
 	@@
