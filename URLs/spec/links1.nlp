@@ -1,6 +1,6 @@
 ###############################################
 # FILE: links1
-# SUBJ: comment
+# SUBJ: No-op pass (placeholder; not in the active analyzer sequence)
 # AUTH: Kruthika
 # CREATED: 2023-10-23 15:15:20
 # MODIFIED:
@@ -8,7 +8,8 @@
 
 @NODES _ROOT
 
+# Pass-through rule that matches nothing meaningful; left as a stub.
 @RULES
 _xNIL <-
-	_xNIL	### (1)
+	_xNIL	### (1) placeholder element
 	@@

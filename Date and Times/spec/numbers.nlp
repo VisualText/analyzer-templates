@@ -1,6 +1,6 @@
 ###############################################
 # FILE: numbers
-# SUBJ: comment
+# SUBJ: Tag each number node with the date fields (month/day/year) it could be
 # AUTH: David de Hilster
 # CREATED: 2024-6-1 15:14:37
 # MODIFIED:
@@ -8,12 +8,15 @@
 
 @NODES _ROOT
 
+# For every number token, read its numeric value and call NumberType
+# (from funcs.nlp) to flag whether it could be a month, day, and/or year.
+# _xNIL means no new node is created; the token is only annotated in place.
 @POST
 L("num") = num(N("$text",1));
 NumberType(N(1),L("num"));
 
 @RULES
 _xNIL <-
-	_xNUM	### (1)
+	_xNUM	### (1) any number token
 	@@
 

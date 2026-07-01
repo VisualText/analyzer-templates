@@ -1,6 +1,6 @@
 ###############################################
 # FILE: Link2
-# SUBJ: comment
+# SUBJ: Match a full schemed URL (scheme://host.../domain...) as _link
 # AUTH: Kruthika
 # CREATED: 2023-6-3 11:20:51
 # MODIFIED:
@@ -8,20 +8,22 @@
 
 @PATH _ROOT _conlink
 
+# Match "scheme://<host chars>_domain<more chars>" e.g.
+# https://en.wikipedia.org/wiki/... and record the scheme (http/https/ftp).
 @PRE
 <1,1> var("isscheme");
 @POST
-S("scheme")=N("isscheme",1);
+S("scheme")=N("isscheme",1);	# store http / https / ftp
 single();
 
 @RULES
 _link <-
-	_xALPHA				
+	_xALPHA
 	\:
 	\/
-	\/		### (1)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	
-	_domain ### (2)
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]
-	_xWILD [fail=( \n \r _xWHITE)]						### (3)
+	\/		### (1) the "scheme://" prefix
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	### host + path characters before the domain tail
+	_domain ### (2) the recognized ".name(.cc)" domain tail
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM \/ \@ \. \- \_ \$ \+ \! \* \' \( \) )]	### trailing path / query characters
+	_xWILD [fail=( \n \r _xWHITE)]						### (3) run to whitespace/end of line
 	@@

@@ -1,25 +1,32 @@
 ###############################################
 # FILE: words
-# SUBJ: comment
+# SUBJ: Mask each alphanumeric token, preserving letter case as x/X
 # AUTH: David de Hilster
 # CREATED: 2023-2-7 15:40:23
 # MODIFIED:
 ###############################################
+
+# Within every line, replace each alphanumeric word with a same-length
+# run of x's. Uppercase letters become "X" and everything else "x", so
+# the shape and capitalization pattern of the original text survive.
 
 @NODES _LINE
 
 @POST
 	L("word") = N("$text");
 	L("len") = strlength(L("word"));
+	# Walk the word one character at a time, emitting an x/X per letter.
 	while (L("i") < L("len")) {
 		L("let") = strpiece(L("word"),L("i"),L("i"));
 		L("x") = "x";
-		if (striscaps(L("let"))) L("x") = "X";
+		if (striscaps(L("let"))) L("x") = "X";		# keep caps visible
 		L("str") = L("str") + L("x");
 		L("i")++;
 	}
+	# Swap the token's text for the masked, equal-length string.
 	pnrename(N(1),L("str"));
 @RULES
+# Match a single alphanumeric token anywhere in the line.
 _xNIL <-
 	_xALPHA
 	@@

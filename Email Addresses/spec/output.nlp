@@ -1,11 +1,12 @@
 ###############################################
 # FILE: output
-# SUBJ: comment
+# SUBJ: Write the collected email addresses and their fields to output.json
 # AUTH: Kruthika
 # CREATED: 2023-10-29 15:7:50
 # MODIFIED:
 ###############################################
 
 @CODE
+# Serialize the "Emailaddrs" KB to JSON (local name, domain, tld, country, ...).
 XMLOut("output.json")
 @@CODE

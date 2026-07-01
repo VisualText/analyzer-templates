@@ -1,6 +1,6 @@
 ###############################################
 # FILE: times
-# SUBJ: comment
+# SUBJ: Recognize clock times and store hour/min/sec and am/pm
 # AUTH: David de Hilster
 # CREATED: 2024-6-1 11:56:34
 # MODIFIED:
@@ -12,6 +12,8 @@
 # 10:04:23 pm
 ###############################################
 
+# hh:mm:ss with optional am/pm; store hour, min, sec, and (if present)
+# the "am" attribute set to the first 2 chars of the meridiem node name.
 @POST
 S("hour") = num(N("$text",1));
 S("min") = num(N("$text",3));
@@ -21,18 +23,19 @@ single();
 
 @RULES
 _time <-
-	_xNUM							### (1)
-	\:								### (2)
-	_xNUM							### (3)
-	\:								### (4)
-	_xNUM							### (5)
-	_xWILD [star match=(_am _pm)]	### (6)
+	_xNUM							### (1) hour
+	\:								### (2) colon
+	_xNUM							### (3) minute
+	\:								### (4) colon
+	_xNUM							### (5) second
+	_xWILD [star match=(_am _pm)]	### (6) optional am/pm marker
 	@@
 
 ###############################################
 # 10:04am
 ###############################################
 
+# hh:mm with optional am/pm (no seconds); store hour, min, and am marker.
 @POST
 S("hour") = num(N("$text",1));
 S("min") = num(N("$text",3));
@@ -41,8 +44,8 @@ single();
 
 @RULES
 _time <-
-	_xNUM							### (1)
-	\:								### (2)
-	_xNUM							### (3)
-	_xWILD [star match=(_am _pm)]	### (4)
+	_xNUM							### (1) hour
+	\:								### (2) colon
+	_xNUM							### (3) minute
+	_xWILD [star match=(_am _pm)]	### (4) optional am/pm marker
 	@@

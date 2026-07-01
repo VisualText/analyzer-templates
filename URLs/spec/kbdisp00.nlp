@@ -1,11 +1,12 @@
 ###############################################
 # FILE: kbdisp00
-# SUBJ: comment
+# SUBJ: Dump the Links KB concept (top level) for inspection
 # AUTH: Kruthika
 # CREATED: 2023-11-6 14:27:23
 # MODIFIED:
 ###############################################
 
 @CODE
+# Display the Links concept and its immediate contents (depth 0).
 DisplayKB(G("Links"),0);
 @@CODE

@@ -1,11 +1,13 @@
 ###############################################
 # FILE: kbinit
-# SUBJ: comment
+# SUBJ: Initialize the "telephones" KB root concept
 # AUTH: Kruthika
 # CREATED: 2023-10-27 21:47:0
 # MODIFIED:
 ###############################################
 
+# Runs once before parsing. Gets (creating if needed) the "telephones" concept
+# off the KB root and holds it in G("telephones") for telKB/output to use.
 @CODE
 
 G("telephones") = getconcept(findroot(),"telephones");

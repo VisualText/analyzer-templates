@@ -1,39 +1,46 @@
 ###############################################
 # FILE: email11
-# SUBJ: comment
+# SUBJ: Attach a preceding local name to the spelled-out _email domain variants
 # AUTH: Kruthika
 # CREATED: 2023-10-30 14:10:24
 # MODIFIED:
 ###############################################
 
-@PATH _ROOT _LINE 
+# The spelled-out "at ... dot ..." rules in email1 only captured the domain.
+# Here a local-name token that precedes such an _email (flagged nox/nor/nop) is
+# joined to it as a new _emails node, and the corresponding fields are set.
+@PATH _ROOT _LINE
+
+# nox: two-label spelled-out domain -> add local, keep dn + tld.
 @PRE
 <3,3> var("nox");
 @POST
-S("local")=N("$text",2);
-S("dn")= N("dn",3);
-S("tld")=N("tld",3);
+S("local")=N("$text",2);   # local name preceding the address
+S("dn")= N("dn",3);        # carry domain label from the _email
+S("tld")=N("tld",3);       # carry tld label from the _email
 single();
 @RULES
 _emails <-
 	_xWILD [one match=(_xWHITE _xSTART \-)]
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\+ \( \) )]
-	_email	### (1)
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\+ \( \) )]   ### local-name characters
+	_email	### (1) the spelled-out domain _email
 	@@
 
+# nor: three-label spelled-out domain -> add local, keep joined domainname.
 @PRE
 <3,3> var("nor");
 @POST
 S("local")=N("$text",2);
-S("domainname")=N("domainname",3);
+S("domainname")=N("domainname",3);   # carry joined domain from the _email
 single();
 @RULES
 _emails <-
 	_xWILD [one match=(_xWHITE _xSTART \-)]
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\( \) )]
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\( \) )]   ### local-name characters
 	_email	### (1)
 	@@
 
+# nop: country-coded spelled-out domain -> add local, keep all domain fields.
 @PRE
 <3,3> var("nop");
 @POST
@@ -41,12 +48,12 @@ S("local")=N("$text",2);
 S("domainname")=N("domainname",3)
 S("dn")= N("dn",3);
 S("tld")=N("tld",3);
-S("cd")=N("cd",3);
-S("country")=N("country",3);
+S("cd")=N("cd",3);            # country-domain label
+S("country")=N("country",3); # resolved country
 single();
 @RULES
 _emails <-
 	_xWILD [one match=(_xWHITE _xSTART \-)]
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\( \) )]
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \. \- \_ \$ \* \' \+\( \) )]   ### local-name characters
 	_email	### (1)
 	@@

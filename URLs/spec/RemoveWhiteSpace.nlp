@@ -9,12 +9,14 @@
 
 @NODES _ROOT
 
+# Delete stray whitespace nodes at the root level so later matching is not
+# disrupted by them. (Not part of the active analyzer sequence.)
 @POST
-excise(1,1);
+excise(1,1);	# remove the whitespace node
 noop();
 
 @RULES
 
 _xNIL <-
-    _xWHITE [s] ### (1)
+    _xWHITE [s] ### (1) a single whitespace token
     @@

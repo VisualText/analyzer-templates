@@ -7,21 +7,23 @@
 
 @NODES _ROOT
 
+# First line of the text: from _xSTART up to (but not including) a newline.
 @PRE
 <2,2> varz("NL");
 
 @RULES
 _LINE <-
-    _xSTART			### (1)
-    _xWILD [plus]	### (2)
+    _xSTART			### (1) start of text
+    _xWILD [plus]	### (2) line content before the newline
     @@
 
+# Subsequent lines: begin after a newline and run up to the next newline.
 @PRE
 <1,1> var("NL");
 <2,2> varz("NL");
 
 @RULES
 _LINE <-
-    _xWILD [one]	### (1)
-    _xWILD [star]	### (2)
+    _xWILD [one]	### (1) first token after a newline
+    _xWILD [star]	### (2) rest of the line before the next newline
     @@

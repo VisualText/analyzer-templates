@@ -1,15 +1,16 @@
 ###############################################
 # FILE: removepunct
-# SUBJ: comment
+# SUBJ: Remove punctuation nodes inside an _address by splicing them out
 # AUTH: Kruthika
 # CREATED: 2023-11-23 19:35:2
 # MODIFIED:
 ###############################################
 @PATH _ROOT _address
+# Splice any _punct node out of the address so only meaningful tokens remain.
 @POST
 splice(1,1);
 
 @RULES
 _xNIL <-
-	_punct	### (1)
+	_punct	### (1) the punctuation node to remove
 	@@

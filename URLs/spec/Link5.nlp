@@ -1,6 +1,6 @@
 ###############################################
 # FILE: Link5
-# SUBJ: comment
+# SUBJ: Trim the _extra tail and parse the host of a schemed link's body
 # AUTH: Kruthika
 # CREATED: 2023-11-2 16:7:28
 # MODIFIED:
@@ -8,14 +8,18 @@
 
 @PATH _ROOT _conlink _link
 
+# First rule: wrap the link body up to (but excluding) the trailing
+# _extra punctuation in a _text node and excise that _extra tail.
 @POST
-excise(2,2);
+excise(2,2);	# drop the trailing punctuation node
 single();
 @RULES
 _text <-
-	_xWILD [fail=_extra]	### (1)
-	_extra					### (2)
+	_xWILD [fail=_extra]	### (1) the actual link characters
+	_extra					### (2) trailing punctuation (excised)
 	@@
+# Host shape "word.domain.domain/path": alpha + two _domain tails.
+# Fields are written back onto the parent _link node (index 3).
 @POST
 X("domain",3)=N("$text",1);
 X("subdomain",3)=N("domain",2);
@@ -32,13 +36,15 @@ X("pagepath",3)=N("$text",5);
 
 @RULES
 _nameofsite <-
-	_xALPHA																							### (1)
-	_domain																							### (2)
-	_domain																							### (3)
+	_xALPHA																							### (1) subdomain
+	_domain																							### (2) domain tail
+	_domain																							### (3) tld tail
 	\/																								### (4)
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \=\& \+ \! \* \' \( \))]	### (5)
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \=\& \+ \! \* \' \( \))]	### (5) page path (with query)
 	@@
 
+# Host shape "sub.domain.tld/path": subdomain (1), domain name (3),
+# ".tld(.cc)" tail (4), then the page path (6).
 @POST
 X("domain",3)=N("$text",3);
 X("subdomain",3)=N("$text",1);
@@ -55,14 +61,16 @@ X("pagepath",3)=N("$text",6);
 
 @RULES
 _nameofsite <-
-	_xALPHA																			### (1)
-	\.																				### (2)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3)
-	_domain																			### (4)
+	_xALPHA																			### (1) subdomain
+	\.																				### (2) dot
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3) domain name
+	_domain																			### (4) ".tld(.cc)" tail
 	\/
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5)
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5) page path
 	@@
 
+# Same "sub.domain.tld/path" shape as above (duplicate rule kept for the
+# grammar's ordered matching); extracts the same subdomain/domain/tld/path.
 @POST
 X("domain",3)=N("$text",3);
 X("subdomain",3)=N("$text",1);
@@ -79,13 +87,16 @@ X("pagepath",3)=N("$text",6);
 
 @RULES
 _nameofsite <-
-	_xALPHA																			### (1)
-	\.																				### (2)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3)
-	_domain																			### (4)
+	_xALPHA																			### (1) subdomain
+	\.																				### (2) dot
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3) domain name
+	_domain																			### (4) ".tld(.cc)" tail
 	\/
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5)
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5) page path
 	@@
+# Host shape "domain.tail/path" with no subdomain: if the tail itself has
+# a second _domain it is treated as sub+tld, otherwise the single tail is
+# the tld (and any country code).
 @POST
 X("domain",3)=N("$text",1);
 if(N("domain",4))
@@ -108,8 +119,8 @@ X("pagepath",3)=N("$text",4);
 
 @RULES
 _nameofsite <-																			### (2)
-	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3)
-	_domain																			### (4)
+	_xWILD [min =1 max=0 match=(_xALPHA _xNUM \-)]									### (3) domain name
+	_domain																			### (4) ".tld(.cc)" tail
 	\/
-	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5)
+	_xWILD [min =0 max=0 match=(_xALPHA _xNUM _domain \/ \@ \. \- \_ \$ \? \= \& \+ \! \* \' \( \))]	### (5) page path
 	@@

@@ -1,6 +1,6 @@
 ###############################################
 # FILE: datesDay
-# SUBJ: comment
+# SUBJ: Recognize weekday-prefixed dates, date/time stamps, and bare years
 # AUTH: David de Hilster
 # CREATED: 2024-6-2 8:1:56
 # MODIFIED:
@@ -12,6 +12,9 @@
 # Wed Aug 05 12:00:00 EDT 2015
 ###############################################
 
+# Full weekday + date + time + year stamp (e.g. "Wed Aug 05 12:00:00 EDT 2015").
+# Builds a _dateTime node carrying weekday, month, day, year and the
+# hour/min/sec copied out of the embedded _time node.
 @PRE
 <1,1> var("day");
 <2,2> var("month");
@@ -31,17 +34,19 @@ single();
 
 @RULES
 _dateTime <-
-	_xALPHA	### (1)
-	_xALPHA	### (2)
-	_xNUM	### (3)
-	_time	### (4)
-	_xNUM	### (5)
+	_xALPHA	### (1) weekday name
+	_xALPHA	### (2) month name
+	_xNUM	### (3) day
+	_time	### (4) clock time
+	_xNUM	### (5) year
 	@@
 
 ###############################################
 # Fri, 12 Dec 2014
 ###############################################
 
+# Weekday word in front of an already-recognized _date (e.g. "Fri, 12 Dec 2014").
+# Attach the weekday name to the existing _date node rather than making a new one.
 @PRE
 <1,1> var("day");
 
@@ -51,15 +56,16 @@ listadd(3,1);
 
 @RULES
 _xNIL <-
-	_xALPHA		### (1)
-	\, [opt]	### (2)
-	_date		### (3)
+	_xALPHA		### (1) weekday name
+	\, [opt]	### (2) optional comma
+	_date		### (3) existing date node
 	@@
  
 ###############################################
 # 2005
 ###############################################
 
+# A standalone 4-digit year on its own becomes a _date (e.g. "2004").
 @PRE
 <1,1> var("year");
 <1,1> length(4);
@@ -70,5 +76,5 @@ single();
 
 @RULES
 _date <-
-	_xNUM	### (1)
+	_xNUM	### (1) 4-digit year
 	@@

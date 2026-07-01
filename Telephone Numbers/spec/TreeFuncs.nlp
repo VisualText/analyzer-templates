@@ -1,13 +1,18 @@
 ###############################################
 # FILE: TreeFuncs
-# SUBJ: comment
+# SUBJ: Parse-tree / concept helper function library (@DECL)
 # AUTH: David de Hilster
 # CREATED: 2024-10-11 8:58:32
 # MODIFIED:
 ###############################################
 
+# Reusable helpers for copying attributes between parse-tree nodes and KB
+# concepts, counting/incrementing, and assigning/looking up tree-node ids.
+# These are called from the grammar passes (e.g. telKB).
+
 @DECL
 
+# Copy every attribute (name/value) from parse node L("from") to node L("to").
 PNCopyAttrsToCPn(L("from"),L("to")) {
 	L("attrs") = pnvarnames(L("from"));
 	"pnpncopy.txt" << "attrs: " << pnname(L("from")) << ": " << L("attrs") << "\n";
@@ -19,6 +24,8 @@ PNCopyAttrsToCPn(L("from"),L("to")) {
     }
 }
 
+# Copy every attribute from parse node L("pn") onto KB concept L("con"),
+# preserving type (string vs number).
 PNCopyAttrsToCon(L("pn"),L("con")) {
 	L("attrs") = pnvarnames(L("pn"));
 	while (L("attrs")[L("i")]) {
@@ -35,6 +42,7 @@ PNCopyAttrsToCon(L("pn"),L("con")) {
     }
 }
 
+# Increment a numeric attribute on a node, initializing it to 1 if unset.
 PNIncrement(L("node"),L("var")) {
 	L("val") = pnvar(L("node"),L("var"));
 	if (L("val")) {
@@ -44,6 +52,8 @@ PNIncrement(L("node"),L("var")) {
 	}
 }
 
+# Assign a unique "id" to L("node") and its ancestors, build the root-to-node
+# id path, and record it on concept L("con") as attribute "pn".
 AddTreeID(L("con"),L("node")) {
 	L("id") = pnvar(L("node"),"id");
 	if (L("id")) {
@@ -71,6 +81,7 @@ AddTreeID(L("con"),L("node")) {
 	addstrval(L("con"),"pn",L("path"));
 }
 
+# Walk a space-separated id path (as built by AddTreeID) back to its node.
 TreeNodeID(L("nodes str")) {
 	L("tokens") = split(L("nodes str")," ");
 	L("len") = arraylength(L("tokens"));
@@ -85,6 +96,7 @@ TreeNodeID(L("nodes str")) {
 	return L("node");
 }
 
+# Scan sibling nodes starting at L("node") for the one whose "id" == L("id").
 TreeNodeWithID(L("node"),L("id")) {
 	"tree.txt" << "Looking for: " << pnname(L("node")) << " " << L("id") << "\n";
 	while (L("node")) {
@@ -97,6 +109,8 @@ TreeNodeWithID(L("node"),L("id")) {
 	}
 }
 
+# Given a concept node, resolve its stored "pn" id path and mark that
+# parse-tree node as fired.
 MarkFired(L("node")) {
     L("pn str") = strval(L("node"),"pn");
     L("pn") = TreeNodeID(L("pn str"));

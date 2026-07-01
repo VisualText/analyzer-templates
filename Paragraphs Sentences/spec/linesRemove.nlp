@@ -1,17 +1,21 @@
 ###############################################
 # FILE: linesRemove
-# SUBJ: comment
+# SUBJ: Remove _LINE nodes so paragraph content is a flat token list
 # AUTH: David de Hilster
 # CREATED: 2024-5-31 15:3:8
 # MODIFIED:
 ###############################################
 
+# Once paragraphs are formed, the intermediate _LINE grouping is no longer
+# needed. splice() dissolves each _LINE, promoting its child tokens up into
+# the _paragraph so later sentence rules see a continuous stream of tokens.
+
 @NODES _paragraph
 
 @POST
-splice(1,1);
+splice(1,1);	# replace the _LINE node with its own children
 
 @RULES
 _xNIL <-
-	_LINE	### (1)
+	_LINE	### (1) any _LINE inside a paragraph
 	@@

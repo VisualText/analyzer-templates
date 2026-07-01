@@ -1,6 +1,6 @@
 ###############################################
 # FILE: funcs
-# SUBJ: comment
+# SUBJ: Helper functions for extending, storing and JSON-outputting email matches
 # AUTH: Kruthika
 # CREATED: 2023-10-28 16:42:10
 # MODIFIED:
@@ -8,6 +8,10 @@
 
 @DECL
 
+# CheckMore: starting just past the matched email node, walk forward over any
+# ".alpha" pairs (e.g. the ".uk" in "...university.edu.uk") and tag each such
+# node with "ispart"=1 so later passes (email2/email3) can absorb them into
+# the domain. Stops as soon as the ".alpha" pattern no longer holds.
 CheckMore(L("var")) {
 L("bar")=1;
     L("val")=pnnext(L("var"));
@@ -28,6 +32,8 @@ while(L("bar"))
     }
 
 }
+# AddAttrs: copy the parsed email fields off a matched node onto its KB concept
+# (local name, domain name, tld, country-domain "cd", and country).
 AddAttrs(L("node"))
 {
     L("concept")=pnvar(L("node"),"con");
@@ -44,6 +50,8 @@ AddAttrs(L("node"))
     addstrval(L("concept"),"country",pnvar(L("node"),"country"));
     
 }
+# CheckPrev: walk backward from a node over "dot"/alpha/digit tokens, tagging
+# each with "isprev"=1 (and logging its text to output.txt).
 CheckPrev(L("node"))
 {
     L("node")=pnprev(L("node"));
@@ -54,6 +62,8 @@ CheckPrev(L("node"))
         L("node")=pnprev(L("node"));
     }
 }
+# CheckName: write every attribute (name:"value") of one email concept to the
+# output stream as JSON key/value pairs; last attribute omits the trailing comma.
 CheckName(L("con"),L("out"))
 {
     G("attrList") = findattrs(L("con"));
@@ -78,6 +88,10 @@ CheckName(L("con"),L("out"))
                 L("out") <<"\""<<getstrval(G("valList"))<<"\"\n";
 }
 }
+# XMLOut: emit the whole "Emailaddrs" KB as a JSON document to L("out"),
+# one object per collected email address (each with an "emailadd-id" plus its
+# fields via CheckName). The last concept is written outside the loop so the
+# closing array/object have no trailing comma.
 XMLOut(L("out")){
         L("out")<<"{\n\t\"email_address\""<<":   [\n";
      L("con") = down(G("email"));

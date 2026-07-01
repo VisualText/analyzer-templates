@@ -1,31 +1,35 @@
 ###############################################
 # FILE: email5
-# SUBJ: comment
+# SUBJ: Tidy inside _email: drop stray whitespace and lift country onto the node
 # AUTH: Kruthika
 # CREATED: 2023-10-28 20:11:2
 # MODIFIED:
 ###############################################
 
+# Operates within a matched _email node.
 @PATH _ROOT _LINE _email
 
+# Remove any leftover whitespace tokens inside the address.
 @POST
 excise(1,1);
 noop();
 
 @RULES
 _xNIL <-
-    _xWHITE [s] ### (1)
+    _xWHITE [s] ### (1) a whitespace token to excise
     @@
 
+# For a ".label.label" tail ending in a country-coded label, copy the resolved
+# country up onto the _email node.
 @PRE
-<4,4> var("country");
+<4,4> var("country");                 # last label must carry a country value
 @POST
-X("country",3)= N("country",4);
+X("country",3)= N("country",4);       # lift country onto the _email node
 
 @RULES
 _xNIL <-
     \.
 	_xALPHA
 	\.
-	_xALPHA
+	_xALPHA                            ### country-code label
     @@

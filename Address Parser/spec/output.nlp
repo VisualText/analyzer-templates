@@ -1,11 +1,12 @@
 ###############################################
 # FILE: output
-# SUBJ: comment
+# SUBJ: Write all parsed addresses to output.json
 # AUTH: Kruthika
 # CREATED: 2023-11-23 21:23:41
 # MODIFIED:
 ###############################################
 
 @CODE
+# Serialize the addresses KB to JSON (see XMLOut in funcs.nlp).
 XMLOut("output.json")
 @@CODE

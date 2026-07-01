@@ -1,10 +1,14 @@
 ###############################################
 # FILE: initials
-# SUBJ: comment
+# SUBJ: Mark middle initials so their period doesn't end a sentence
 # AUTH: David de Hilster
 # CREATED: 2024-6-3 14:39:21
 # MODIFIED:
 ###############################################
+
+# A single-letter middle initial followed by a period (as in "John R. Jones")
+# looks like a sentence ender. Grouping the letter + period into an _initial
+# node protects that period from the sentenceEnders pass.
 
 @NODES _paragraph
 
@@ -13,15 +17,15 @@
 ###############################################
 
 @PRE
-<4,4> lengthr(1,100);
+<4,4> lengthr(1,100);	# following word must be a plausible name (1-100 chars)
 
 @POST
-group(2,3,"_initial");
+group(2,3,"_initial");	# wrap the letter + "." (elements 2-3) as _initial
 
 @RULES
 _xNIL <-
-	_xALPHA	### (1)
-	_xLET	### (2)
-	\.		### (3)
-	_xALPHA	### (4)
+	_xALPHA	### (1) preceding word (e.g. "John")
+	_xLET	### (2) the single initial letter (e.g. "R")
+	\.		### (3) the period after the initial
+	_xALPHA	### (4) following word (e.g. "Jones")
 	@@

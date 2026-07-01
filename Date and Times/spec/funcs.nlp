@@ -1,6 +1,6 @@
 ###############################################
 # FILE: funcs
-# SUBJ: comment
+# SUBJ: Declare shared helper functions for classifying numeric values
 # AUTH: David de Hilster
 # CREATED: 2024-5-31 21:26:46
 # MODIFIED:
@@ -8,16 +8,23 @@
 
 @DECL
 
+# NumberType tags a number node with the date fields its value could be.
+# A single number may qualify as more than one (e.g. 5 is a valid month,
+# day, and 2-digit year), so multiple flags can be set on the same node.
 NumberType(L("node"),L("num")) {
+    # 1-12 could be a month
     if (L("num") >= 1 && L("num") <= 12) {
         pnmakevar(L("node"),"month",1);
     }
+    # 1-31 could be a day of the month
     if (L("num") >= 1 && L("num") <= 31) {
         pnmakevar(L("node"),"day",1);
     }
+    # 1900-2050 could be a 4-digit year
     if (L("num") >= 1900 && L("num") <= 2050) {
         pnmakevar(L("node"),"year",1);
     }
+    # 0-99 could be a 2-digit year
 	if (L("num") >= 0 && L("num") <= 99) {
         pnmakevar(L("node"),"year",1);
     }

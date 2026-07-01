@@ -1,12 +1,18 @@
 ###############################################
 # FILE: Links
-# SUBJ: comment
+# SUBJ: Match domain tails (.name and .name.cc) inside a line
 # AUTH: Kruthika
 # CREATED: 2023-6-3 11:31:0
 # MODIFIED:
 ###############################################
 
+# Recognize the ".<word>" (and ".<word>.<cc>") pieces of a host name.
+# Each match becomes a _domain node; X("link")=1 flags the line as
+# containing a link and the domain / country fields are stored.
+
 @PATH _ROOT _LINE
+# Case: ".name.cc" where the 2nd token is a known domain word and the
+# 4th token is a known country code (e.g. .org.uk).
 @PRE
 <2,2> var("domain");
 <4,4> var("country");
@@ -18,12 +24,13 @@ S("countryname")=N("country",4);
 single();
 @RULES
 _domain<-
-	\.	### (1)
+	\.	### (1) leading dot
 	_xALPHA
 	\.
 	_xALPHA
 	@@
 
+# Case: ".cc" where the token is a known country code (e.g. .aero, .uk).
 @PRE
 <2,2> var("country");
 @POST
@@ -33,10 +40,11 @@ S("countryname")=N("country",2);
 single();
 @RULES
 _domain<-
-	\.	### (1)
+	\.	### (1) leading dot
 	_xALPHA
 	@@
 
+# Case: ".name" where the token is a known generic domain word (.com, .org).
 @PRE
 <2,2> var("domain");
 @POST
@@ -45,7 +53,7 @@ S("domain")=N("$text",2);
 single();
 @RULES
 _domain<-
-	\.	### (1)
+	\.	### (1) leading dot
 	_xALPHA
 	@@
 

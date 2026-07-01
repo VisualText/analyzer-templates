@@ -1,20 +1,21 @@
 ###############################################
 # FILE: email3
-# SUBJ: comment
+# SUBJ: Collapse the trailing ".label" segments of an _emailx into one _word
 # AUTH: Kruthika
 # CREATED: 2023-10-28 19:59:31
 # MODIFIED:
 ###############################################
 
-
+# Inside an _emailx, fold the "ispart"-flagged ".label" tokens into a single
+# _word node and stash their combined text on the parent _emailx as "domain".
 @PATH _ROOT _LINE _emailx
 @PRE
-<1,1> var("ispart");
+<1,1> var("ispart");                 # only fire on the flagged domain tail
 @POST
-X("domain",3)=N("$text",1);
+X("domain",3)=N("$text",1);          # save the joined ".label" text on _emailx (parent)
 
 single();
 @RULES
 _word <-	
-	_xWILD [min=1 max=0 match=(\. _xALPHA)]
+	_xWILD [min=1 max=0 match=(\. _xALPHA)]   ### the trailing ".label" run
 	@@

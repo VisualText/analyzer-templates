@@ -1,6 +1,6 @@
 ###############################################
 # FILE: kbinit
-# SUBJ: comment
+# SUBJ: Initialize the Links knowledge-base concept
 # AUTH: Kruthika
 # CREATED: 2023-11-2 15:48:30
 # MODIFIED:
@@ -8,5 +8,7 @@
 
 @CODE
 
+# Fetch (creating if needed) the "Links" concept under the KB root; each
+# link found later becomes a child concept of G("links").
 G("links") = getconcept(findroot(),"Links");
 @@CODE

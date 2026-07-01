@@ -1,25 +1,36 @@
-# Url Links
+# URLs
 
-An analyzer for URL links
+An analyzer that finds hyperlinks (URLs) in text and breaks each one into its parts.
 
 ## Analyzer Notes
 
-This is an NLP++ Analyzer that parses through text and identifies any hyperlinks present in the text. A wide variety of link formats are recognized.
+This is an NLP++ analyzer that scans plain text, locates any hyperlinks it contains, and decomposes each link into its component fields. A wide variety of link shapes are recognized, including:
 
-Some sample links can be found in input/text.txt
+- Full schemed links, e.g. `https://en.wikipedia.org/wiki/Machine_learning`
+- File-transfer links, e.g. `ftp://ftp.example.com/myfile.zip`
+- Bare `www.` and sub-domain hosts, e.g. `www.wired.com`, `music.youtube.com`
+- Links with query strings, e.g. `https://www.google.com/search?q=example`
+- Multi-part top-level domains, e.g. `download.mozilla.org.uk`
 
-From each hyperlink,the information like:
+Sample links to try live in `input/text.txt`.
 
-- Scheme of the link(Like https(Secure Hypertext Tranfer Protocol), ftp(File Transfer Protocol))
+### Fields extracted
 
-- Domain-name(eg: wikipedia)
- 
-- Sub-domain(like en(English)/jp(Japanese) etc.)
+For each hyperlink the analyzer pulls out and stores the following, then emits them as JSON:
 
-- Page path
+- **scheme** — the protocol, e.g. `https` (Secure Hypertext Transfer Protocol), `http`, or `ftp` (File Transfer Protocol)
+- **subdomain** — the host prefix, e.g. `en` (English), `www`, `music`
+- **domain** — the registered name, e.g. `wikipedia`, `youtube`, `mozilla`
+- **tld** — the top-level domain, e.g. `org`, `com`, `edu`
+- **country** / **countryname** — the country-code TLD and its expansion when present, e.g. `uk`
+- **pagepath** — the path (and any query string) after the host, e.g. `wiki/Machine_learning`
 
-- Top Level Domain(like org/edu etc.)is extracted and made available in the json format.
+Each link is collected under the `Links` concept in the knowledge base and given a numeric `link-id`.
 
-A sample output can be found(for the sample text) in input/text.text_log/output.json.
+## Output
 
-To run the analyzer, create a text file in input folder consisting of the text to be parsed.
+After a run, the extracted links are written as JSON to the run's log folder, e.g. `input/text.txt_log/output.json`.
+
+## Running
+
+To run the analyzer, place a text file containing the text to be parsed in the `input` folder, then run the analyzer over it.

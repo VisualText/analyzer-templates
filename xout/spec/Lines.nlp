@@ -1,21 +1,27 @@
 ###################################################
 # FILE: lines.pat
-# SUBJ: Gather Lines
+# SUBJ: Group tokens into _LINE and _BLANKLINE nodes
 # CREATED: 10/Mar/99 13:35:22
 # Date of this version: 31/Aug/01
 # Copyright 1999-2004, Text Analysis International
 ###################################################
 
+# Segment the flat token stream (from tokenize) into line nodes so that
+# later passes can walk the text one line at a time. Blank lines are
+# captured separately from content lines to preserve the layout.
+
 @NODES _ROOT
 
 @RULES
 
+# A run of only spaces/tabs/CR ending in a newline => an empty line.
 _BLANKLINE <-
-    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1)
-    \n ### (2)
+    _xWILD [min=0 max=0 matches=(\  \t \r)] ### (1) leading whitespace
+    \n ### (2) terminating newline
     @@
 
+# Any run of tokens up to (but not consuming) end-of-line => one content line.
 _LINE <-
-    _xWILD [min=0 max=0 fails=(\r \n)] ### (1)
-    _xWILD [one match=(\n _xEND)] ### (2)
+    _xWILD [min=0 max=0 fails=(\r \n)] ### (1) the line's tokens
+    _xWILD [one match=(\n _xEND)] ### (2) newline or end of file
     @@

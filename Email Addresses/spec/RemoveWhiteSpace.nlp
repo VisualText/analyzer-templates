@@ -7,14 +7,15 @@
 # Copyright 2000, Text Analysis International #
 ###############################################
 
+# Strip whitespace tokens directly under the root so remaining nodes sit adjacent.
 @NODES _ROOT
 
 @POST
-excise(1,1);
+excise(1,1);   # remove the matched whitespace token
 noop();
 
 @RULES
 
 _xNIL <-
-    _xWHITE [s] ### (1)
+    _xWHITE [s] ### (1) a single whitespace token
     @@

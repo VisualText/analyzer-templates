@@ -1,16 +1,19 @@
 ###############################################
 # FILE: Link3
-# SUBJ: comment
+# SUBJ: Group trailing punctuation at the end of a link into _extra
 # AUTH: Kruthika
 # CREATED: 2023-11-2 15:10:45
 # MODIFIED:
 ###############################################
 @PATH _ROOT _conlink _link
 
+# Sentence punctuation glued to a URL (e.g. a trailing comma, period or
+# closing bracket) is collected into an _extra node so it can be excised
+# later and kept out of the link's page path.
 @POST
 single();
 @RULES
 _extra <-
-	_xWILD [plus match=(\, \- \. \[ \] \( \)\: \?)]	### (1)
-	_xEND										### (2)
+	_xWILD [plus match=(\, \- \. \[ \] \( \)\: \?)]	### (1) run of trailing punctuation
+	_xEND										### (2) at the end of the link
 	@@

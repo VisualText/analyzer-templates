@@ -1,11 +1,13 @@
 ###############################################
 # FILE: output
-# SUBJ: comment
+# SUBJ: Write the collected telephones KB to disk
 # AUTH: Kruthika
 # CREATED: 2023-10-29 15:7:50
 # MODIFIED:
 ###############################################
 
+# Final pass. Serialize the accumulated "telephones" concept tree:
+# a binary KB (.kbb) and a JSON export of the extracted numbers.
 @CODE
 
 SaveKB("telephones.kbb",G("telephones"),1);

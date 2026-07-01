@@ -1,9 +1,9 @@
 dicttokz	nil	# Gen:   Convert input to token list
-nlp	funcs	# comment
-nlp	numbers	# comment
-nlp	ordinals	# comment
-nlp	times	# comment
-nlp	zulu	# comment
-nlp	dates	# comment
-nlp	datesDay	# comment
-nlp	highlight	# comment
+nlp	funcs	# Declare shared helper functions (NumberType)
+nlp	numbers	# Tag numbers as candidate month/day/year values
+nlp	ordinals	# Recognize ordinals (1st, 2nd) and am/pm markers
+nlp	times	# Recognize clock times (10:04:23 pm, 10:04am)
+nlp	zulu	# Recognize zulu / ISO 8601 timestamps
+nlp	dates	# Recognize date expressions in many formats
+nlp	datesDay	# Recognize dates with weekdays and standalone years
+nlp	highlight	# Highlight recognized _date and _time nodes

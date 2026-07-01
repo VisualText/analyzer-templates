@@ -1,34 +1,38 @@
 ###############################################
 # FILE: linksphno
-# SUBJ: comment
+# SUBJ: Attach links, emails and telephones from a header zone to the KB
 # AUTH: Kruthika
 # CREATED: 2023-6-29 19:2:39
 # MODIFIED:
 ###############################################
+# Note: not part of the active analyzer sequence (header-zone contacts).
 
 @PATH _ROOT _headerZone _LINE
+# A recognized _link in the header zone is recorded on the zone concept.
 @POST
 AddLink(X("con",2),N("$text",1));
 
 @RULES
 _xNIL <-
-	_link	### (1)
+	_link	### (1) a hyperlink token
 	@@
 
+# A recognized _email is recorded on the same zone concept.
 @POST
 AddEmail(X("con",2),N("$text",1));
 
 @RULES
 _xNIL <-
-	_email	### (1)
+	_email	### (1) an email address token
 	@@
 
+# A recognized _telephone gets its own numbered Telephone concept.
 @POST
 S("con")=MakeCountCon(X("con",2),"Telephone");
 AddTelephone(S("con"),N(1));
 
 @RULES
 _xNIL <-
-	_telephone	### (1)
+	_telephone	### (1) a phone-number token
 	@@
 	

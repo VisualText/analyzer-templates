@@ -1,11 +1,13 @@
 ###############################################
 # FILE: output
-# SUBJ: comment
+# SUBJ: Write the extracted links to output.json
 # AUTH: Kruthika
 # CREATED: 2023-11-2 20:0:27
 # MODIFIED:
 ###############################################
 
 @CODE
+# Serialize all collected link concepts as a JSON array to output.json
+# (in the run's log folder) via the XMLOut helper in funcs.nlp.
 XMLOut("output.json")
 @@CODE
