@@ -1,0 +1,30 @@
+###############################################
+# FILE: kbinit
+# SUBJ: Fetch the concept(s) imported into the KB from JSON
+# AUTH: David de Hilster
+# CREATED: 2026-07-15
+# MODIFIED:
+###############################################
+
+@CODE
+
+# IMPORT SIDE OF THE INTERFACE
+# ---------------------------------------------------------------------
+# Before this pass runs, the "json2kbb" python pass converted every
+# <name>.json in kb/user/ into a matching <name>.kbb, and the engine
+# loaded those .kbb files into the knowledge base. So the JSON that a
+# NLPPlus python/npm script handed to this analyzer (via put_json_file
+# or put_json_object) is now a live concept hanging off the KB root.
+#
+# The sample kb/user/data.json has a single top-level key "data", so
+# json2kbb builds a root concept named "data". Grab it and hold it in a
+# global so the output pass (and any grammar passes you add) can use it.
+# If you import a differently named file, fetch that concept name here.
+G("data") = getconcept(findroot(),"data");
+
+# From here you would normally read G("data") to drive your analyzer --
+# look up values, tag matches in the text, grow other concepts, etc.
+# This template keeps it simple and just round-trips the imported data
+# back out as JSON in the output pass.
+
+@@CODE

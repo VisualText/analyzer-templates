@@ -1,0 +1,5 @@
+python	json2kbb	# IMPORT: build data.kbb from any data.json in kb/user (placed there by NLPPlus put_json_*)
+dicttokz	nil	# Convert the input text to a token list
+nlp	KBFuncs	# Shared knowledge base function library
+nlp	kbinit	# Fetch the concept(s) json2kbb imported into the KB
+nlp	output	# EXPORT: save the KB and write output.json (read back via results.output)
