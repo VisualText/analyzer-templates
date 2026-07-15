@@ -1,0 +1,10 @@
+{
+  "data": {
+    "source": "NLPPlus",
+    "record_count": 2,
+    "records": [
+      { "name": "Acme Corp", "founded": 1990, "employees": 250 },
+      { "name": "Globex",    "founded": 2004, "employees": 80  }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+###############################################
+# FILE: output
+# SUBJ: Export the knowledge base as JSON (and a readable KBB dump)
+# AUTH: David de Hilster
+# CREATED: 2026-07-15
+# MODIFIED:
+###############################################
+
+@CODE
+
+# EXPORT SIDE OF THE INTERFACE
+# ---------------------------------------------------------------------
+# Write the imported data back out as JSON. The file MUST be named
+# "output.json": that is the file the NLPPlus package reads back for
+# you as "results.output" (a parsed JSON object) and "results.output_json"
+# (the raw string). Anything you want to hand back to your python/npm
+# script -- extracted fields, tags, a transformed KB -- goes here.
+JsonKB("output.json",G("data"));
+
+# Human-readable KB dump, handy while developing in the VSCode extension
+# (appears in the input's *.txt_log/ folder alongside output.json). The
+# third argument is the attribute display detail level.
+SaveKB("data.kbb",G("data"),2);
+
+@@CODE

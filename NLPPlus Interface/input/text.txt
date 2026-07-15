@@ -1,0 +1,4 @@
+This analyzer demonstrates the NLPPlus data interface: JSON handed in from
+a Python or NPM script is imported into the knowledge base and then exported
+back out as output.json. The input text itself is not parsed by this template
+-- the data comes in through kb/user/data.json, not through this file.

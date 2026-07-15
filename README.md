@@ -26,6 +26,9 @@ Identifies email addresses across a variety of formats. For each match it extrac
 ### [Knowledge Base](Knowledge%20Base/README.md)
 A starter analyzer that builds, saves, and exports a knowledge base as JSON. Shows the minimal plumbing: an init pass that creates a `kb` global concept and populates it, and an output pass that persists it with `SaveKB` and `JsonKB` from the shared KB function library.
 
+### [NLPPlus Interface](NLPPlus%20Interface/README.md)
+A two-way data interface between the NLPPlus packages (Python and NPM) and an analyzer: imports JSON handed in by a script into the knowledge base (via the `json2kbb` pass) and exports the knowledge base back out as `output.json`.
+
 ### [Paragraphs Sentences](Paragraphs%20Sentences/README.md)
 Lays out the basics of paragraph and sentence segmentation with dictionary lookup. Intended as a starting point — each domain has its own quirks (abbreviations, lists, etc.) that can fool sentence enders and will need domain-specific handling.
 
