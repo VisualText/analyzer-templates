@@ -1,5 +1,7 @@
 # Analyzer Templates
 
+[![PyPI: NLPPlus](https://img.shields.io/pypi/v/NLPPlus?label=PyPI%20NLPPlus&logo=pypi&logoColor=white)](https://pypi.org/project/NLPPlus/) [![npm: nlpplus](https://img.shields.io/npm/v/nlpplus?label=npm%20nlpplus&logo=npm)](https://www.npmjs.com/package/nlpplus)
+
 These are template analyzers that appear in the **New Analyzer** selection list of the [NLP++ Language Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=dehilster.nlp). When a user creates a new analyzer from the extension, they can pick one of these templates as a starting point and then extend it for their own domain.
 
 For more on the NLP++ language and tooling, see the [VisualText / NLP++ project site](http://vscode.visualtext.org).
