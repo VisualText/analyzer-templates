@@ -6,7 +6,7 @@ A two-way data interface between the NLPPlus packages and an NLP++ analyzer: JSO
 
 ## Analyzer Notes
 
-The [NLPPlus package for Python](https://github.com/VisualText/py-package-nlpengine) and the [NLPPlus package for NPM](https://github.com/VisualText/npm-package-nlpengine) let a script run one of your analyzers and exchange structured data with it. This template shows both directions of that exchange:
+The [NLPPlus package for Python](https://pypi.org/project/NLPPlus/) and the [NLPPlus package for NPM](https://www.npmjs.com/package/nlpplus) let a script run one of your analyzers and exchange structured data with it. This template shows both directions of that exchange:
 
 - **Import** — a script hands JSON to the analyzer; the analyzer loads it into its knowledge base (KB).
 - **Export** — the analyzer writes its results as JSON; the script reads them back.
